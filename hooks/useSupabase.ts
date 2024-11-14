@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 
-export default function useSupabase(fn: () => Promise<any>) {
-  const [data, setData] = useState([]);
+export default function useSupabase<T>(fn: () => Promise<any>) {
+  const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const getData = async () => {

@@ -2,13 +2,9 @@ import { Tabs } from "expo-router";
 import React from "react";
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-import { useColorScheme } from "@/hooks/useColorScheme";
-
-const THEME_COLOR = "#006239";
+import { THEME_COLOR } from "@/constants/constant";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
@@ -18,15 +14,15 @@ export default function TabLayout() {
         tabBarStyle: {
           elevation: 0,
           borderTopWidth: 1,
-          borderTopColor: colorScheme === "dark" ? "#333333" : "#E5E5E5",
+          borderTopColor: "#333333",
           paddingBottom: 7,
           paddingTop: 5,
-          backgroundColor: colorScheme === "dark" ? "#1f2937" : "#fff",
+          backgroundColor: "#1f2937",
         },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
@@ -39,12 +35,25 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="users"
         options={{
-          title: "Explore",
+          title: "Users",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "compass" : "compass-outline"}
+              name={focused ? "person-circle" : "person-circle-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: "Teams",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "people-circle" : "people-circle-outline"}
               color={color}
               size={24}
             />

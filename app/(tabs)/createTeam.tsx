@@ -1,8 +1,9 @@
+import Header from "@/components/Header";
 import Spinner from "@/components/Spinner";
 import { createTeam } from "@/libs/supabase";
+import { Plus } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -10,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const CreateTeam = () => {
   const [teamName, setTeamName] = useState("");
@@ -18,19 +20,28 @@ const CreateTeam = () => {
 
   const handleCreateTeam = async () => {
     if (!teamName) {
-      Alert.alert("Error", "Team name is required");
+      Toast.show({
+        type: "errorDark",
+        text1: "Team name is required",
+      });
       return;
     }
     try {
       setIsLoading(true);
-      console.log(teamName, teamDescription);
       await createTeam({ name: teamName, description: teamDescription });
-      Alert.alert("Team Created", "Team has been created successfully");
+
       setTeamName("");
       setTeamDescription("");
+      Toast.show({
+        type: "successDark",
+        text1: "Team Created",
+      });
     } catch (error) {
       console.log(error);
-      Alert.alert("Error", "Failed to Create Team");
+      Toast.show({
+        type: "errorDark",
+        text1: "Failed to Create Team",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -38,12 +49,13 @@ const CreateTeam = () => {
 
   return (
     <SafeAreaView className="p-5 flex-1 bg-gray-900">
+      <Header
+        title="Create Team"
+        description="Create a new team"
+        icon={<Plus size={24} color="white" />}
+      />
       <ScrollView>
-        <View className="bg-gray-800/90 rounded-xl p-5 shadow-lg mt-5">
-          <Text className="text-white text-2xl font-bold mb-5">
-            Create New Team
-          </Text>
-
+        <View className="bg-gray-800/90 rounded-xl p-2 shadow-lg ">
           {/* Team Name Input */}
           <TextInput
             className="bg-gray-900/90 border border-green-500/30 rounded-xl p-4 mb-4 text-white"

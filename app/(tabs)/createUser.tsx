@@ -1,28 +1,26 @@
+import Header from "@/components/Header";
+import Loading from "@/components/Loading";
 import Spinner from "@/components/Spinner";
+import useRefresh from "@/hooks/useRefresh";
 import useSupabase from "@/hooks/useSupabase";
 import { createUser, getTeams, uploadImage } from "@/libs/supabase";
+import { ImageFile, Team } from "@/types/types";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
+import { Camera, UserPlus } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Alert,
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-interface ImageFile {
-  uri: string;
-  type: string;
-  name: string;
-  base64: string | null | undefined;
-}
+import Toast from "react-native-toast-message";
 
 const CreateUser = () => {
   const [name, setName] = useState("");
@@ -31,21 +29,19 @@ const CreateUser = () => {
   const [team, setTeam] = useState("");
   const [role, setRole] = useState("user");
   const [password, setPassword] = useState("");
-  const { data: teams, isLoading, refetch } = useSupabase(getTeams);
+  const { data: teams, isLoading, refetch } = useSupabase<Team[]>(getTeams);
   const [isCreating, setIsCreating] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  const { refreshing, onRefresh } = useRefresh(refetch);
 
-  const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  }, [refetch]);
-
-  if (isLoading) return <Spinner size="large" />;
+  if (isLoading) return <Loading />;
 
   const handleCreateUser = async () => {
     if (!name || !password || !image || !team || !role) {
-      return Alert.alert("Error", "Please fill all the fields");
+      Toast.show({
+        type: "errorDark",
+        text1: "Please fill all the fields",
+      });
+      return;
     }
     try {
       setIsCreating(true);
@@ -54,11 +50,14 @@ const CreateUser = () => {
         name,
         password,
         image: imageUrl,
-        team,
+        teams: [team],
         role,
-        email,
+        email: email.toLowerCase().trim(),
       });
-      Alert.alert("Success", "User Created Successfully");
+      Toast.show({
+        type: "successDark",
+        text1: "User Created Successfully",
+      });
       setName("");
       setPassword("");
       setImage(null);
@@ -67,7 +66,10 @@ const CreateUser = () => {
       setEmail("");
     } catch (error) {
       console.log(error);
-      Alert.alert("Error", "Failed to Create User");
+      Toast.show({
+        type: "errorDark",
+        text1: "Failed to Create User",
+      });
     } finally {
       setIsCreating(false);
     }
@@ -97,18 +99,42 @@ const CreateUser = () => {
     }
   };
 
+  const takePhoto = async () => {
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      const fileExtension = uri.split(".").pop();
+
+      const imageFile = {
+        uri,
+        type: `image/${fileExtension}`,
+        name: `upload.${fileExtension}`,
+        base64: result.assets[0].base64,
+      };
+
+      setImage(imageFile);
+    }
+  };
+
   return (
     <SafeAreaView className="p-5 flex-1 bg-gray-900">
+      <Header
+        title="Create User"
+        description="Create a new user"
+        icon={<UserPlus size={24} color="white" />}
+      />
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View className="bg-gray-800/90 rounded-xl p-5 shadow-lg mt-5">
-          <Text className="text-white text-2xl font-bold mb-5">
-            Create New User
-          </Text>
-
+        <View className="bg-gray-800/90 rounded-xl p-2 shadow-lg ">
           <TextInput
             className="bg-gray-900/90 border border-green-500/30 rounded-xl p-4 mb-4 text-white"
             placeholder="Name"
@@ -135,20 +161,32 @@ const CreateUser = () => {
           />
 
           <View className="mb-4">
-            <TouchableOpacity
-              onPress={pickImage}
-              className="bg-gray-900/90 border border-green-500/30 rounded-xl p-4 flex-row justify-between items-center"
-            >
-              <Text className="text-gray-400">
-                {image ? "Change Image" : "Pick an Image"}
-              </Text>
-              {image && (
+            <View className="flex-row gap-3">
+              <TouchableOpacity
+                onPress={pickImage}
+                className="flex-1 bg-gray-900/90 border border-green-500/30 rounded-xl p-4 flex-row justify-between items-center"
+              >
+                <Text className="text-gray-400">
+                  {image ? "Change Image" : "Pick from Gallery"}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={takePhoto}
+                className="bg-gray-900/90 border border-green-500/30 rounded-xl p-4 items-center justify-center w-14"
+              >
+                <Camera size={24} color="#9CA3AF" />
+              </TouchableOpacity>
+            </View>
+
+            {image && (
+              <View className="mt-3">
                 <Image
                   source={{ uri: image.uri }}
-                  className="w-14 h-14 rounded-md"
+                  className="w-20 h-20 rounded-md"
                 />
-              )}
-            </TouchableOpacity>
+              </View>
+            )}
           </View>
 
           <View className="mb-4">
@@ -161,9 +199,10 @@ const CreateUser = () => {
                 className="h-12"
               >
                 <Picker.Item label="Select a team" value="" />
-                {teams.map(({ name: teamName, id }) => (
-                  <Picker.Item key={id} label={teamName} value={id} />
-                ))}
+                {teams &&
+                  teams.map(({ name: teamName, id }) => (
+                    <Picker.Item key={id} label={teamName} value={teamName} />
+                  ))}
               </Picker>
             </View>
           </View>
