@@ -36,6 +36,7 @@ const User = () => {
         images,
         team,
         from_name: fromUser?.name ?? "",
+        to_name: toUser?.name ?? "",
       };
       await createTask(newTask);
       Toast.show({

@@ -13,6 +13,7 @@ import {
 
 import Header from "@/components/Header";
 import Loading from "@/components/Loading";
+import { NotificationButton } from "@/components/NotificationButton";
 import TaskCard from "@/components/TaskCard";
 import useRefresh from "@/hooks/useRefresh";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -52,9 +53,12 @@ export default function TasksScreen() {
           title="Your Tasks"
           description={`${tasks?.length} tasks`}
           icon={
-            <TouchableOpacity onPress={handleSignOut}>
-              <LogOut size={24} color="white" />
-            </TouchableOpacity>
+            <View className="flex-row items-center gap-4">
+              <NotificationButton />
+              <TouchableOpacity onPress={handleSignOut}>
+                <LogOut size={24} color="white" />
+              </TouchableOpacity>
+            </View>
           }
         />
         <ScrollView

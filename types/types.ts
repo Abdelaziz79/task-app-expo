@@ -24,6 +24,16 @@ export type Notification = {
   type: "new_task" | "completed_task";
 };
 
+export type NotificationPayload = {
+  id: number;
+  user_id: string;
+  created_at: string;
+  message: string;
+  type: "new_task" | "completed_task";
+  read: boolean;
+  task_id?: number;
+};
+
 export type Task = {
   id: string;
   created_at: string;

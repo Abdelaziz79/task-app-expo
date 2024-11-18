@@ -1,7 +1,7 @@
-import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 
@@ -10,26 +10,28 @@ import { NotificationHandler } from "@/components/NotificationHandler";
 import { toastConfig } from "@/components/ToastComps";
 import { UserProvider } from "@/contexts/UserContext";
 import { StatusBar } from "expo-status-bar";
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+
+// Disable console.logs in production
+if (!__DEV__) {
+  console.log = () => {};
+  console.warn = () => {};
+  console.error = () => {};
+}
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
   useEffect(() => {
-    if (loaded) {
+    // Wrap in try-catch to ensure splash screen is hidden
+    try {
       SplashScreen.hideAsync();
+    } catch (e) {
+      // Ignore any errors
     }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+  }, []);
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <UserProvider>
         <NotificationHandler />
         <Stack>
@@ -39,11 +41,10 @@ export default function RootLayout() {
           <Stack.Screen name="user/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="(tasks)" options={{ headerShown: false }} />
           <Stack.Screen name="task/[state]" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
         </Stack>
-        <StatusBar backgroundColor="#161622" style="light" />
         <Toast config={toastConfig} visibilityTime={2000} />
+        <StatusBar backgroundColor="#161622" style="light" />
       </UserProvider>
-    </>
+    </GestureHandlerRootView>
   );
 }

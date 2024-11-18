@@ -19,7 +19,7 @@ export default function TeamScreen() {
     <SafeAreaView className="flex-1 p-5 bg-gray-900">
       <Header
         title="Your Teams"
-        description={`${user?.teams?.length} teams`}
+        description={`${user?.teams?.length ?? 0} teams`}
         icon={<Users2Icon size={24} color="white" />}
       />
 

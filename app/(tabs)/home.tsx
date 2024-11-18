@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import LinkComp from "@/components/LinkComp";
 import Loading from "@/components/Loading";
+import { NotificationButton } from "@/components/NotificationButton";
 import StateBox from "@/components/StateBox";
 import { useUserContext } from "@/contexts/UserContext";
 import useRefresh from "@/hooks/useRefresh";
@@ -67,9 +68,12 @@ export default function HomeScreen() {
           title={`Welcome ${user?.name} !`}
           description="Your tasks and stats"
           icon={
-            <TouchableOpacity onPress={handleSignOut}>
-              <LogOut size={24} color="white" />
-            </TouchableOpacity>
+            <View className="flex-row items-center gap-4">
+              <NotificationButton />
+              <TouchableOpacity onPress={handleSignOut}>
+                <LogOut size={24} color="white" />
+              </TouchableOpacity>
+            </View>
           }
         />
       </View>

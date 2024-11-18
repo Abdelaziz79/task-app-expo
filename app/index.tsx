@@ -160,9 +160,9 @@ const Index = () => {
 
 export default Index;
 
-// TODO: add notification when user add task or finish task
 // TODO: minimize the request to supabase
 
+// DONE: add notification when user add task or finish task
 // DONE: add charts in home page
 // DONE: enhance styling (team page, user box, task card)
 // DONE: add camera button to create user
