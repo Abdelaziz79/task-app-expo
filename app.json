@@ -21,7 +21,6 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "android.permission.RECORD_AUDIO",
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.POST_NOTIFICATIONS",
@@ -32,7 +31,8 @@
         "backgroundColor": "#161622",
         "resizeMode": "contain",
         "image": "./assets/images/splash.png"
-      }
+      },
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -47,15 +47,34 @@
           "photosPermission": "The app needs access to your photos to let you share them."
         }
       ],
+      "expo-splash-screen",
       [
-        "expo-notifications",
+        "expo-build-properties",
         {
-          "icon": "./assets/images/icon.png",
-          "color": "#ffffff",
-          "sounds": ["./assets/sounds/notification.wav"]
+          "android": {
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33,
+            "buildToolsVersion": "33.0.0",
+            "extraMavenRepos": [
+              "../../node_modules/@react-native-firebase/app/android/libs"
+            ]
+          }
         }
       ],
-      "expo-splash-screen"
+      [
+        "@react-native-firebase/app",
+        {
+          "android_package_name": "com.azeez.taskapp",
+          "google_services_file": "./google-services.json"
+        }
+      ],
+      [
+        "@react-native-firebase/messaging",
+        {
+          "auto_init": true,
+          "android_package_name": "com.azeez.taskapp"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

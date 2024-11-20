@@ -1,5 +1,6 @@
 import { Notification } from "@/types/types";
 import { createClient } from "@supabase/supabase-js";
+import { sendFirebaseNotification } from "./firebase";
 
 export const supabase = createClient(
   "https://uibqfaydlnkujfskugyy.supabase.co",
@@ -402,6 +403,37 @@ export async function getTasksByState(state: string) {
 
 // NOTIFICATIONS
 
+async function sendPushNotification(
+  userId: string,
+  title: string,
+  body: string
+) {
+  const { data: userData } = await supabase
+    .from("users")
+    .select("fcm_token")
+    .eq("id", userId)
+    .single();
+
+  if (userData?.fcm_token) {
+    const response = await fetch("https://fcm.googleapis.com/fcm/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "key=BMQN4W_76PQFz2YLv48mt8cK6nWiGvzNGHmNzfs9-jnSQvJ3RKyV502f4kokNfTJXsxreapTeyp8ussoDluCfSo", // Get this from Firebase Console
+      },
+      body: JSON.stringify({
+        to: userData.fcm_token,
+        notification: {
+          title,
+          body,
+        },
+      }),
+    });
+    return response.json();
+  }
+}
+
 export async function createNotification(notificationData: Notification) {
   const { data, error } = await supabase
     .from("notifications")
@@ -411,6 +443,14 @@ export async function createNotification(notificationData: Notification) {
     console.log(error);
     throw error;
   }
+
+  // Send push notification
+  await sendPushNotification(
+    notificationData.user_id,
+    notificationData.type === "new_task" ? "New Task" : "Task Update",
+    notificationData.message
+  );
+
   return data;
 }
 
@@ -478,5 +518,43 @@ export async function uploadImage(file: any) {
   } catch (error) {
     console.error("Error uploading image:", error);
     throw error;
+  }
+}
+
+export async function sendNotification(
+  userId: string,
+  title: string,
+  body: string
+) {
+  try {
+    const { data: userData } = await supabase
+      .from("users")
+      .select("fcm_token, expo_push_token")
+      .eq("id", userId)
+      .single();
+
+    if (userData?.fcm_token) {
+      // Send via Firebase
+      await sendFirebaseNotification(userData.fcm_token, title, body);
+    } else if (userData?.expo_push_token) {
+      // Fallback to Expo
+      await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Accept-encoding": "gzip, deflate",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: userData.expo_push_token,
+          sound: "default",
+          title,
+          body,
+          priority: "high",
+        }),
+      });
+    }
+  } catch (error) {
+    console.error("Error sending notification:", error);
   }
 }

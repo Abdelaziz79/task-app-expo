@@ -1,19 +1,21 @@
+import { useEffect, useRef } from "react";
+import { Platform } from "react-native";
+import * as Notifications from "expo-notifications";
 import { useUserContext } from "@/contexts/UserContext";
 import { supabase } from "@/libs/supabase";
 import {
   showNotification,
   subscribeToNotifications,
 } from "@/utils/notifications";
-import * as Notifications from "expo-notifications";
-import { useEffect, useRef } from "react";
-import { Platform } from "react-native";
+import { checkPlayServices } from "@/libs/push-notifications";
+import messaging from "@react-native-firebase/messaging";
 
+// Configure Expo notifications
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
-    priority: Notifications.AndroidNotificationPriority.MAX,
   }),
 });
 
@@ -22,66 +24,94 @@ export function NotificationHandler() {
   const subscriptionRef = useRef<any>(null);
 
   useEffect(() => {
-    async function setupNotifications() {
-      if (!user || isLoading) {
-        // console.log("No user or still loading");
-        return;
-      }
-
-      // console.log("Setting up notifications for user:", user.id);
-
+    async function setupPushNotifications() {
       try {
-        // Set up Android channel
-        if (Platform.OS === "android") {
-          await Notifications.setNotificationChannelAsync("default", {
-            name: "default",
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: "#FF231F7C",
-            enableVibrate: true,
-            showBadge: true,
-          });
-          // console.log("Android notification channel set up");
+        const hasPlayServices = await checkPlayServices();
+        console.log("Has Play Services:", hasPlayServices);
+
+        if (hasPlayServices) {
+          // Setup Firebase
+          const authStatus = await messaging().requestPermission();
+          const enabled =
+            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+          if (enabled) {
+            const fcmToken = await messaging().getToken();
+            if (fcmToken && user?.id) {
+              console.log("FCM Token:", fcmToken);
+              await supabase
+                .from("users")
+                .update({ fcm_token: fcmToken })
+                .eq("id", user.id);
+
+              // Set up Firebase message handler
+              messaging().onMessage(async (remoteMessage) => {
+                console.log("Received foreground message:", remoteMessage);
+                showNotification(
+                  remoteMessage.notification?.title || "New Message",
+                  remoteMessage.notification?.body || ""
+                );
+              });
+
+              // Handle background messages
+              messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+                console.log("Received background message:", remoteMessage);
+                return Promise.resolve();
+              });
+            }
+          }
+        } else {
+          console.log("Falling back to Expo notifications");
+          // Set up Android channel for Expo notifications
+          if (Platform.OS === "android") {
+            await Notifications.setNotificationChannelAsync("default", {
+              name: "default",
+              importance: Notifications.AndroidImportance.MAX,
+              vibrationPattern: [0, 250, 250, 250],
+              lightColor: "#FF231F7C",
+              enableVibrate: true,
+              showBadge: true,
+            });
+          }
+
+          // Request permission and get Expo token
+          const { status } = await Notifications.requestPermissionsAsync();
+          if (status === "granted") {
+            const expoPushToken = await Notifications.getExpoPushTokenAsync({
+              projectId: "your-expo-project-id", // Add your Expo project ID here
+            });
+
+            if (expoPushToken.data && user?.id) {
+              console.log("Expo Push Token:", expoPushToken.data);
+              await supabase
+                .from("users")
+                .update({ expo_push_token: expoPushToken.data })
+                .eq("id", user.id);
+            }
+
+            // Set up notification handler
+            const subscription = Notifications.addNotificationReceivedListener(
+              (notification) => {
+                console.log("Notification received:", notification);
+              }
+            );
+
+            subscriptionRef.current = subscription;
+          }
         }
-
-        // Request notification permissions
-        const { status } = await Notifications.requestPermissionsAsync();
-        // console.log("Notification permission status:", status);
-
-        if (status !== "granted") {
-          // console.log("Notification permissions not granted");
-          return;
-        }
-
-        // Set up notification handlers
-        const foregroundSubscription =
-          Notifications.addNotificationReceivedListener((notification) => {
-            // console.log("Received foreground notification:", notification);
-          });
-
-        // Clean up existing subscription
-        if (subscriptionRef.current) {
-          subscriptionRef.current.unsubscribe();
-        }
-
-        // Set up Supabase subscription
-        subscriptionRef.current = subscribeToNotifications(user.id);
-        // console.log("Supabase subscription set up for user:", user.id);
-
-        return () => {
-          foregroundSubscription.remove();
-        };
       } catch (error) {
-        console.error("Error in setupNotifications:", error);
+        console.error("Push notification setup error:", error);
       }
     }
 
-    setupNotifications();
-    // testNotifications();
+    if (user && !isLoading) {
+      setupPushNotifications();
+    }
+
     return () => {
       if (subscriptionRef.current) {
-        // console.log("Cleaning up notification subscription");
-        subscriptionRef.current.unsubscribe();
+        Notifications.removeNotificationSubscription(subscriptionRef.current);
         subscriptionRef.current = null;
       }
     };
@@ -89,37 +119,3 @@ export function NotificationHandler() {
 
   return null;
 }
-const testNotifications = async () => {
-  try {
-    // Test 1: Direct notification
-    // console.log("Testing direct notification...");
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Direct Test",
-        body: "This is a direct test notification",
-        sound: true,
-      },
-      trigger: null,
-    });
-
-    // Test 2: Through our showNotification function
-    // console.log("Testing showNotification function...");
-    await showNotification(
-      "Function Test",
-      "This is a test through our function"
-    );
-
-    // Test 3: Simulate a Supabase notification
-    // console.log("Testing Supabase notification...");
-    await supabase.from("notifications").insert([
-      {
-        user_id: "YOUR_USER_ID", // Replace with actual user ID
-        message: "This is a test notification",
-        type: "new_task",
-        read: false,
-      },
-    ]);
-  } catch (error) {
-    console.error("Test error:", error);
-  }
-};
