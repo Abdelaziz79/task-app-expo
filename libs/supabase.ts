@@ -1,4 +1,4 @@
-import { Notification } from "@/types/types";
+import { Deadline, Notification } from "@/types/types";
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(
@@ -447,6 +447,57 @@ export async function getNotifications(userId: string) {
     .order("created_at", { ascending: false })
     .limit(50);
 
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+  return data;
+}
+
+// DEADLINES
+
+export async function createDeadline(deadlineData: Deadline) {
+  const { data, error } = await supabase
+    .from("deadlines")
+    .insert([deadlineData]);
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+  return data;
+}
+
+export async function getDeadlines(userId: string) {
+  const { data, error } = await supabase
+    .from("deadlines")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+  return data;
+}
+
+export async function completeDeadline(deadlineId: string) {
+  const { data, error } = await supabase
+    .from("deadlines")
+    .update({ complete: true })
+    .eq("id", deadlineId);
+
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+  return data;
+}
+
+export async function deleteDeadlineById(deadlineId: string) {
+  const { data, error } = await supabase
+    .from("deadlines")
+    .delete()
+    .eq("id", deadlineId);
   if (error) {
     console.log(error);
     throw error;

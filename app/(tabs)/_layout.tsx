@@ -12,11 +12,6 @@ export default function TabLayout() {
         tabBarInactiveTintColor: "#666666",
         headerShown: false,
         tabBarStyle: {
-          elevation: 0,
-          borderTopWidth: 1,
-          borderTopColor: "#333333",
-          paddingBottom: 7,
-          paddingTop: 5,
           backgroundColor: "#1f2937",
         },
       }}
@@ -63,27 +58,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="createUser"
         options={{
+          href: null,
           title: "Create User",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "person-add-sharp" : "person-add-outline"}
-              color={color}
-              size={24}
-            />
-          ),
+          tabBarIcon: () => null,
         }}
       />
       <Tabs.Screen
         name="createTeam"
         options={{
+          href: null,
           title: "Create Team",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "people-sharp" : "people-outline"}
-              color={color}
-              size={24}
-            />
-          ),
+          tabBarIcon: () => null,
         }}
       />
     </Tabs>

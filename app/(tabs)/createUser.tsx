@@ -7,7 +7,7 @@ import { createUser, getTeams, uploadImage } from "@/libs/supabase";
 import { ImageFile, Team } from "@/types/types";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
-import { Camera, UserPlus } from "lucide-react-native";
+import { Camera, UserRoundPlus } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Image,
@@ -127,7 +127,7 @@ const CreateUser = () => {
       <Header
         title="Create User"
         description="Create a new user"
-        icon={<UserPlus size={24} color="white" />}
+        icon={<UserRoundPlus size={24} color="white" />}
       />
       <ScrollView
         refreshControl={

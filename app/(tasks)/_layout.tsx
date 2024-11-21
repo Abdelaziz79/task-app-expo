@@ -19,11 +19,6 @@ export default function TabLayout() {
         tabBarInactiveTintColor: "#666666",
         headerShown: false,
         tabBarStyle: {
-          elevation: 0,
-          borderTopWidth: 1,
-          borderTopColor: "#333333",
-          paddingBottom: 7,
-          paddingTop: 5,
           backgroundColor: "#1f2937",
         },
       }}
@@ -54,6 +49,26 @@ export default function TabLayout() {
               size={24}
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="deadline"
+        options={{
+          title: "Deadlines",
+          href:
+            user?.role != "admin" && user?.role != "superAdmin"
+              ? null
+              : undefined,
+          tabBarIcon:
+            user?.role != "admin" && user?.role != "superAdmin"
+              ? () => null
+              : ({ color, focused }) => (
+                  <TabBarIcon
+                    name={focused ? "alarm-sharp" : "alarm-outline"}
+                    color={color}
+                    size={24}
+                  />
+                ),
         }}
       />
 

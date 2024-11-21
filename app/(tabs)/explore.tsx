@@ -2,13 +2,19 @@ import useSupabase from "@/hooks/useSupabase";
 import { getTeams } from "@/libs/supabase";
 import { Team } from "@/types/types";
 import { router } from "expo-router";
-import { RefreshControl, ScrollView, View } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import Header from "@/components/Header";
 import Loading from "@/components/Loading";
 import TeamBox from "@/components/TeamBox";
 import useRefresh from "@/hooks/useRefresh";
-import { Users2Icon } from "lucide-react-native";
+import { Plus, Users2Icon } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabTwoScreen() {
@@ -26,7 +32,20 @@ export default function TabTwoScreen() {
       <Header
         title="All Teams"
         description="All teams"
-        icon={<Users2Icon size={24} color="white" />}
+        icon={
+          <TouchableOpacity
+            onPress={() => router.push("/createTeam")}
+            className="flex flex-col items-center justify-center gap-1"
+          >
+            <View className="flex flex-row items-center">
+              <Users2Icon size={24} color="white" />
+              <Plus size={16} style={{ marginLeft: -3 }} color="white" />
+            </View>
+            <Text className="text-white text-xs font-semibold">
+              Create Team
+            </Text>
+          </TouchableOpacity>
+        }
       />
 
       {/* Teams List Section */}

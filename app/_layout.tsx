@@ -31,7 +31,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, direction: "ltr" }}>
       <UserProvider>
         <NotificationHandler />
         <Stack>

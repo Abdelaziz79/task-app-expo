@@ -6,6 +6,8 @@ import React from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
+const randomColor = () => Math.floor(Math.random() * 256);
+
 const UserBox = ({
   user,
   showTeam = true,
@@ -14,6 +16,8 @@ const UserBox = ({
   showTeam?: boolean;
 }) => {
   const { user: currentUser } = useUserContext();
+  const opacity = 0.3;
+
   const handlePress = () => {
     if (user.id == currentUser?.id) {
       Toast.show({
@@ -31,9 +35,9 @@ const UserBox = ({
       {/* Top accent bar */}
       <LinearGradient
         colors={[
-          "rgba(16, 185, 129, 0.2)", // emerald
-          "rgba(20, 184, 166, 0.2)", // teal
-          "rgba(6, 182, 212, 0.2)", // cyan
+          `rgba(${randomColor()}, ${randomColor()}, ${randomColor()}, ${opacity})`,
+          `rgba(${randomColor()}, ${randomColor()}, ${randomColor()}, ${opacity})`,
+          `rgba(${randomColor()}, ${randomColor()}, ${randomColor()}, ${opacity})`,
         ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
@@ -91,3 +95,7 @@ const UserBox = ({
 };
 
 export default UserBox;
+
+// `rgba(16, 185, 129, 0.2)`, // emerald
+// `rgba(20, 184, 166, 0.2)`, // teal
+// `rgba(6, 182, 212, 0.2)`, // sky

@@ -4,9 +4,10 @@ import UserBox from "@/components/UserBox";
 import useSupabase from "@/hooks/useSupabase";
 import { getUsers } from "@/libs/supabase";
 import { User } from "@/types/types";
-import { UserSquare } from "lucide-react-native";
+import { router } from "expo-router";
+import { UserRoundPlus } from "lucide-react-native";
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Users = () => {
@@ -17,7 +18,17 @@ const Users = () => {
       <Header
         title="All Users"
         description="All users"
-        icon={<UserSquare size={24} color="white" />}
+        icon={
+          <TouchableOpacity
+            onPress={() => router.push("/createUser")}
+            className="flex flex-col items-center justify-center gap-1"
+          >
+            <UserRoundPlus size={24} color="white" />
+            <Text className="text-white text-xs font-semibold">
+              Create User
+            </Text>
+          </TouchableOpacity>
+        }
       />
 
       <FlatList

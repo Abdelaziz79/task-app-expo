@@ -78,3 +78,14 @@ export type TaskCardProps = {
   showCompleteButton?: boolean;
   fromUser?: boolean;
 };
+
+export type Deadline = {
+  id?: string;
+  title: string;
+  finish_date: string;
+  user_id: string;
+  description?: string;
+  image?: string;
+  complete?: boolean;
+  created_at?: string;
+};

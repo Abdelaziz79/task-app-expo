@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Spinner from "@/components/Spinner";
 import { createTeam } from "@/libs/supabase";
-import { Plus } from "lucide-react-native";
+import { Plus, Users2Icon } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -52,7 +52,12 @@ const CreateTeam = () => {
       <Header
         title="Create Team"
         description="Create a new team"
-        icon={<Plus size={24} color="white" />}
+        icon={
+          <View className="flex flex-row items-center">
+            <Users2Icon size={24} color="white" />
+            <Plus size={16} style={{ marginLeft: -3 }} color="white" />
+          </View>
+        }
       />
       <ScrollView>
         <View className="bg-gray-800/90 rounded-xl p-2 shadow-lg ">

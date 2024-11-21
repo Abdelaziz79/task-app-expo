@@ -4,21 +4,22 @@
     "slug": "task-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/adaptive-icon.png",
     "scheme": "task-app",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#161622"
+      "backgroundColor": "#111827"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "backgroundColor": "#111827"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#111827"
       },
       "permissions": [
         "android.permission.RECORD_AUDIO",
@@ -29,10 +30,11 @@
       ],
       "package": "com.azeez.taskapp",
       "splash": {
-        "backgroundColor": "#161622",
+        "backgroundColor": "#111827",
         "resizeMode": "contain",
         "image": "./assets/images/splash.png"
-      }
+      },
+      "backgroundColor": "#111827"
     },
     "web": {
       "bundler": "metro",
@@ -40,6 +42,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      ["expo-dev-client"],
       ["expo-router"],
       [
         "expo-image-picker",
@@ -55,7 +58,8 @@
           "sounds": ["./assets/sounds/notification.wav"]
         }
       ],
-      "expo-splash-screen"
+      "expo-splash-screen",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
@@ -64,6 +68,13 @@
       "eas": {
         "projectId": "b758d156-040c-4a13-a1a7-7a7fffe1566d"
       }
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#111827",
+      "translucent": false
+    },
+    "androidNavigationBar": {
+      "backgroundColor": "#111827"
     }
   }
 }
