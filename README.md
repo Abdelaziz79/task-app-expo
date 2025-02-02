@@ -1,50 +1,139 @@
-# Welcome to your Expo app 👋
+# Task Management Mobile App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native mobile application built with Expo for task and team management. The app features real-time notifications, team collaboration, and deadline tracking.
 
-## Get started
+## Features
 
-1. Install dependencies
+- 🔐 User Authentication
+- 📋 Task Management
+- 👥 Team Collaboration
+- ⏰ Deadline Tracking
+- 📱 Real-time Notifications
+- 📊 Task Statistics
+- 🖼️ Image Upload Support
+- 🎨 Modern UI with Dark Theme
 
+## Tech Stack
+
+- [Expo](https://expo.dev/) - React Native development platform
+- [Supabase](https://supabase.com/) - Backend and real-time subscriptions
+- [NativeWind](https://www.nativewind.dev/) - Tailwind CSS for React Native
+- [Expo Router](https://docs.expo.dev/router/introduction/) - File-based routing
+- [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/) - Native touch and gesture system
+- [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) - Animations
+- [Expo Notifications](https://docs.expo.dev/versions/latest/sdk/notifications/) - Push notifications
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Abdelaziz79/task-app-expo.git
+   cd <repository-folder>
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Start the development server:
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+### Environment Setup
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Make sure you have the following installed:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Node.js
+- npm or yarn
+- Expo CLI
+- Android Studio (for Android development)
+- Xcode (for iOS development, macOS only)
+- Expo Go (for testing on physical devices)
 
-## Get a fresh project
+## Project Structure
 
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+.
+├── app/                    # Main application code
+│   ├── (tabs)/            # Tab navigation screens
+│   ├── (tasks)/           # Task-related screens
+│   ├── team/              # Team management screens
+│   └── user/              # User profile screens
+├── components/            # Reusable components
+├── contexts/              # React Context providers
+├── hooks/                 # Custom React hooks
+├── libs/                  # External library configurations
+├── types/                 # TypeScript type definitions
+└── utils/                 # Utility functions
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Features in Detail
 
-## Learn more
+### Authentication
+- Email/password login system
+- Persistent authentication using AsyncStorage
+- Role-based access control (User, Admin, SuperAdmin)
 
-To learn more about developing your project with Expo, look at the following resources:
+### Task Management
+- Create and assign tasks
+- Upload images to tasks
+- Mark tasks as complete
+- Track task status (Pending/Completed)
+- View task history
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Team Features
+- Create and manage teams
+- Add/remove team members
+- Team-specific task assignment
+- Team member collaboration
 
-## Join the community
+### Notifications
+- Real-time push notifications
+- Task assignment notifications
+- Task completion notifications
+- Notification center with read/unread status
 
-Join our community of developers creating universal apps.
+### Deadlines
+- Create and track deadlines
+- Deadline priority indicators
+- Visual progress tracking
+- Swipe actions for quick management
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Building for Production
+
+To create a production build:
+
+```bash
+eas build --platform android   # For Android
+eas build --platform ios       # For iOS
+```
+
+## Contributing
+
+1. Fork the repository.
+2. Create your feature branch:
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m 'Add some AmazingFeature'
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. Open a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Acknowledgments
+
+- [Expo](https://expo.dev/) for the amazing development platform
+- [Supabase](https://supabase.com/) for the backend infrastructure
+- [NativeWind](https://www.nativewind.dev/) for the styling system
+
